@@ -5,10 +5,11 @@ import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.testproject.base.BaseTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CollectionImageApiTest extends BaseTest{
+public class CollectionImageApiTest extends BaseTest {
     final static String API_KEY = "";
 
     @Test

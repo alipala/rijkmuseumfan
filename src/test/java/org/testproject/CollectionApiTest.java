@@ -1,51 +1,36 @@
 package org.testproject;
 
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.testproject.base.BaseTest;
+import org.testproject.helper.RequestHelper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.testproject.helper.RequestHelper.*;
 
-public class CollectionApiTest extends BaseTest{
-    final static String API_KEY = "";
+public class CollectionApiTest extends BaseTest {
+
+    public static final String ENDPOINT = "/collection";
     // Smoke tests
     @Test
     @Tag("smoke")
     public void testGetCollection(){
-        Response response = RestAssured
-                .given()
-                .log().all()
-                .queryParam("key", API_KEY)
-                .queryParam("ps", 30)
-                .when()
-                .get("/collection")
-                .then()
-                .log().all()
-                .statusCode(200)
-                .extract()
-                .response();
-
-        assertThat(response.getBody().asString()).as("Checking if response is null").isNotNull();
-        assertThat(response.getStatusCode()).as("Checking if response code is correct").isEqualTo(200);
+        Response response = RequestHelper.sendGetRequest("/collection");
+        assertStatusCode(response, HttpStatus.SC_OK);
+        assertResponseNotNull(response);
     }
     @Test
     @Tag("smoke")
     public void testGetCollectionWithOptionalParameter() {
-        Response response = RestAssured
-                .given()
-                .log().all()
-                .queryParam("key", API_KEY)
-                .queryParam("imgonly", true)
-                .when()
-                .get("/collection")
-                .then()
-                .log().all()
-                .statusCode(200)
-                .extract()
-                .response();
-
-        assertThat(response.getBody().asString()).as("Checking if response is null").isNotNull();
+        Map<String, Object> params = new HashMap<>();
+        params.put("imgonly", true);
+        Response response = sendGetRequestWithOptionalParams(ENDPOINT, params);
+        assertStatusCode(response, HttpStatus.SC_OK);
         boolean hasArtObjects = response.jsonPath().getList("artObjects").size() > 0;
         assertThat(hasArtObjects).isTrue();
     }
@@ -64,48 +49,31 @@ public class CollectionApiTest extends BaseTest{
     @Test
     @Tag("e2e")
     public void testGetCollectionDestructive() {
-        RestAssured
-                .given()
-                .log().all()
-                .queryParam("key", API_KEY)
-                .queryParam("p", -1)
-                .queryParam("culture", "tr") // Destructive scenario
-                .when()
-                .get("/collection")
-                .then()
-                .log().all()
-                .statusCode(400); // Assuming 400 bad request
+        Map<String, Object> params = new HashMap<>();
+        params.put("p", -1);
+        params.put("culture", "tr");
 
+        Response response = sendGetRequestWithOptionalParams(ENDPOINT, params);
+        assertStatusCode(response, HttpStatus.SC_BAD_REQUEST);
     }
     @Test
     @Tag("e2e")
     public void testSqlInjection() {
-        RestAssured
-                .given()
-                .queryParam("key", API_KEY)
-                .queryParam("format", "json")
-                .queryParam("q", "1 OR 1=1") // Destructive: SQL Injection attempt
-                .when()
-                .get("/collection")
-                .then()
-                .statusCode(400);
+        Map<String, Object> params = new HashMap<>();
+        params.put("format", "json");
+        params.put("q", "1 OR 1=1"); // Destructive: SQL Injection attempt
 
+        Response response = sendGetRequestWithOptionalParams(ENDPOINT, params);
+        assertStatusCode(response, HttpStatus.SC_BAD_REQUEST);
     }
     @Test
     @Tag("e2e")
     public void testGetCollectionLargePageSize() {
-        Response response = RestAssured
-                .given()
-                .log().all()
-                .queryParam("key", API_KEY)
-                .queryParam("ps", "100") // Edge case: large page size
-                .when()
-                .get("/collection")
-                .then()
-                .log().all()
-                .statusCode(200)
-                .extract().response();
+        Map<String, Object> params = new HashMap<>();
+        params.put("limit", 1000);
 
-        assertThat(response.getBody()).isNotNull();
+        Response response = sendGetRequestWithOptionalParams(ENDPOINT, params);
+        assertStatusCode(response, HttpStatus.SC_BAD_REQUEST);
+        assertResponseNotNull(response);
     }
 }
