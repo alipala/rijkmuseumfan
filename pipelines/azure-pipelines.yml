@@ -1,0 +1,33 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  MAVEN_OPTS: '-Xmx1024m'
+
+steps:
+  - task: Maven@3
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'clean install'
+      options: '-Dmaven.test.failure.ignore=false'
+
+  - script: mvn test -Psmoke
+    displayName: 'Run Smoke Tests'
+    continueOnError: false
+
+  - script: mvn test -Pregression
+    displayName: 'Run Regression Tests'
+    condition: succeeded()
+
+  - script: mvn test -Pe2e
+    displayName: 'Run E2E Tests'
+    condition: succeeded()
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/target/surefire-reports/TEST-*.xml'
+      failTaskOnFailedTests: true
