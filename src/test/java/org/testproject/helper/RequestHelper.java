@@ -8,7 +8,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RequestHelper {
-    //private static final String API_KEY = System.getenv("TEST_API_KEY");
     private static final String API_KEY = ConfigHelper.getProperty("api.key");
 
     public static Response sendGetRequest(String endpoint) {
