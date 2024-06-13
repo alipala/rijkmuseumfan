@@ -5,29 +5,44 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  MAVEN_OPTS: '-Xmx1024m'
+  api_key: $(API_KEY)
 
-steps:
-  - task: Maven@3
-    inputs:
-      mavenPomFile: 'pom.xml'
-      goals: 'clean install'
-      options: '-Dmaven.test.failure.ignore=false'
+stages:
+  - stage: FunctionalTests
+    jobs:
+      - job: RunFunctionalTests
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.x'
+              addToPath: true
 
-  - script: mvn test -Psmoke
-    displayName: 'Run Smoke Tests'
-    continueOnError: false
+          - script: |
+              echo "Running Smoke Tests..."
+              mvn clean test -Psmoke
+            displayName: 'Run Smoke Tests'
 
-  - script: mvn test -Pregression
-    displayName: 'Run Regression Tests'
+          - script: |
+              echo "Running Regression Tests..."
+              mvn clean test -Pregression
+            displayName: 'Run Regression Tests'
+
+          - script: |
+              echo "Running E2E Tests..."
+              mvn clean test -Pe2e
+            displayName: 'Run E2E Tests'
+
+          - script: |
+              echo "All functional tests passed successfully."
+            displayName: 'Functional Tests Passed'
+
+  - stage: LoadTest
+    dependsOn: FunctionalTests
     condition: succeeded()
-
-  - script: mvn test -Pe2e
-    displayName: 'Run E2E Tests'
-    condition: succeeded()
-
-  - task: PublishTestResults@2
-    inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: '**/target/surefire-reports/TEST-*.xml'
-      failTaskOnFailedTests: true
+    jobs:
+      - job: RunLoadTests
+        steps:
+          - script: |
+              echo "Running Load Tests..."
+              k6 run load-test.js
+            displayName: 'Run Load Tests'
