@@ -16,7 +16,7 @@ import java.util.Map;
 public class CollectionApiTest extends BaseTest {
 
     public static final String ENDPOINT = "/collection";
-    // Smoke tests
+    // Smoke test
     @Test
     @Tag("smoke")
     public void testGetCollection(){
