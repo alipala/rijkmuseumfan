@@ -72,4 +72,4 @@ The project uses the following dependencies:
 4. Run the tests using the Maven commands.
 
 ## Continuous Integration
-The project is set up to run tests in a pipeline, executing smoke tests first, followed by regression tests, and finally, e2e tests. Performance tests are run after functional tests.
+The project is set up to run tests in an Azure DevOps pipeline, executing smoke tests first, followed by regression tests, and finally, e2e tests. Performance tests are run after functional tests.
