@@ -1,8 +1,5 @@
 package org.testproject;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.testproject.helper.RequestHelper.assertStatusCode;
-
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
@@ -14,6 +11,9 @@ import org.testproject.helper.TestReporter;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.testproject.helper.RequestHelper.assertStatusCode;
 
 public class CollectionImageApiTest extends BaseTest {
     @Test

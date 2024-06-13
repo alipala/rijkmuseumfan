@@ -1,8 +1,5 @@
 package org.testproject;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.testproject.helper.RequestHelper.*;
-
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
@@ -10,21 +7,27 @@ import org.junit.jupiter.api.Test;
 import org.testproject.base.BaseTest;
 import org.testproject.helper.RequestHelper;
 import org.testproject.helper.TestReporter;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.testproject.helper.RequestHelper.*;
 
 public class CollectionApiTest extends BaseTest {
 
     public static final String ENDPOINT = "/collection";
+
     // Smoke test
     @Test
     @Tag("smoke")
-    public void testGetCollection(){
+    public void testGetCollection() {
         TestReporter.createTest("testGetCollection");
         Response response = RequestHelper.sendGetRequest(ENDPOINT);
         assertStatusCode(response, HttpStatus.SC_OK);
         assertResponseNotNull(response);
     }
+
     @Test
     @Tag("smoke")
     public void testGetCollectionWithOptionalParameter() {
@@ -43,6 +46,7 @@ public class CollectionApiTest extends BaseTest {
     public void testGetCollectionWithInvalidApiKey() {
         // Implement test for invalid api key and expect status 403 forbidden
     }
+
     @Test
     @Tag("regression")
     public void testGetCollectionWithMissingApiKey() {
@@ -60,6 +64,7 @@ public class CollectionApiTest extends BaseTest {
         Response response = sendGetRequestWithOptionalParams(ENDPOINT, params);
         assertStatusCode(response, HttpStatus.SC_BAD_REQUEST);
     }
+
     @Test
     @Tag("e2e")
     public void testSqlInjection() {
@@ -71,6 +76,7 @@ public class CollectionApiTest extends BaseTest {
         Response response = sendGetRequestWithOptionalParams(ENDPOINT, params);
         assertStatusCode(response, HttpStatus.SC_BAD_REQUEST);
     }
+
     @Test
     @Tag("e2e")
     public void testGetCollectionLargePageSize() {

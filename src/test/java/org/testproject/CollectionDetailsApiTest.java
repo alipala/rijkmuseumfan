@@ -1,9 +1,5 @@
 package org.testproject;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.testproject.helper.RequestHelper.assertResponseNotNull;
-import static org.testproject.helper.RequestHelper.assertStatusCode;
-
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
@@ -12,8 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.testproject.base.BaseTest;
 import org.testproject.helper.RequestHelper;
 import org.testproject.helper.TestReporter;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.testproject.helper.RequestHelper.assertStatusCode;
 
 public class CollectionDetailsApiTest extends BaseTest {
     @Test
