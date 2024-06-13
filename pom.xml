@@ -68,7 +68,6 @@
         <version>3.2.5</version>
         <configuration>
           <outputName>surefire-report</outputName>
-          <reportNameSuffix>-report</reportNameSuffix>
           <linkXRef>true</linkXRef>
         </configuration>
         <executions>
