@@ -37,7 +37,7 @@ public class CollectionApiTest extends BaseTest {
 
         Response response = sendGetRequestWithOptionalParams(ENDPOINT, params);
         assertStatusCode(response, HttpStatus.SC_OK);
-        boolean hasArtObjects = response.jsonPath().getList("artObjects").size() > 0;
+        boolean hasArtObjects = !response.jsonPath().getList("artObjects").isEmpty();
         assertThat(hasArtObjects).isTrue();
     }
 
